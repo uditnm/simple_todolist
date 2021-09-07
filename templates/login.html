@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .log {
+          margin: auto;
+          width: 60%;
+          text-align:center;
+          border: 3px solid #8A2BE2;
+          padding: 10px;
+          }
+    </style>
+</head>
+<body>
+<div class="log">
+<h1>Login</h1><br>
+
+{% for message in messages %}
+<h5>{{message}}</h5>
+{% endfor %}
+
+<form action="" method="post">
+    {% csrf_token %}
+    <p>Username:</p>
+    <input type="text" name="username" />
+    <p>Password:</p>
+    <input type="password" name="password" /><br>
+    <input type="submit" />
+</form>
+
+<br><p> New? Register here:</p>
+<form action="register">
+    <button type="submit">Register</button>
+</form>
+</div>
+</body>
+</html>
