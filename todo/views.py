@@ -4,10 +4,17 @@ from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from todo.devsettings import host
+from django.contrib.auth.signals import user_logged_in
 
 
 @login_required(login_url="/")
 def index(request):
+    emails = User.objects.filter(username=request.user).values_list('email', flat=True)
+
+    if User.last_login!=None:
+        send_mail("welcome","Welcome to my app. This is a simple to do list app that helps you manage tasks",host,emails)
     todolist = Todo.objects.filter(user=request.user)
     if request.method == "POST":
         Todo1 = Todo(
@@ -60,5 +67,6 @@ def login(request):
 def logout(request):
     auth.logout(request)
     return redirect("/")
+
 
 
