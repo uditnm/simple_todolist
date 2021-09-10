@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
-from todo.devsettings import host
 
 
 @login_required(login_url="/")
@@ -14,7 +13,7 @@ def index(request):
 
     abc = Access.objects.get(user = request.user)
     if abc.has_visited is not True:
-        send_mail("welcome","Welcome to my app! This is a simple to do list app that helps you manage tasks.",host,emails)
+        send_mail("welcome","Welcome to my app! This is a simple to do list app that helps you manage tasks.", "EMAIL_HOST", emails)
         print(abc.has_visited)
         abc.has_visited = True
         abc.save()
