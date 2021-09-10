@@ -1,27 +1,31 @@
 from django.shortcuts import render,redirect
-from .models import Todo
+from .models import Todo, Access
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from todo.devsettings import host
-from django.contrib.auth.signals import user_logged_in
 
 
 @login_required(login_url="/")
 def index(request):
     emails = User.objects.filter(username=request.user).values_list('email', flat=True)
 
-    if User.last_login!=None:
-        send_mail("welcome","Welcome to my app. This is a simple to do list app that helps you manage tasks",host,emails)
+    abc = Access.objects.get(user = request.user)
+    if abc.has_visited is not True:
+        send_mail("welcome","Welcome to my app! This is a simple to do list app that helps you manage tasks.",host,emails)
+        print(abc.has_visited)
+        abc.has_visited = True
+        abc.save()
+
     todolist = Todo.objects.filter(user=request.user)
     if request.method == "POST":
-        Todo1 = Todo(
-            task=request.POST['task'],user = request.user)
-        Todo1.save()
+        todo1 = Todo(
+            task=request.POST['task'], user=request.user)
+        todo1.save()
         return redirect("index")
-    return render(request, "index.html", {"todolist":todolist})
+    return render(request, "index.html", {"todolist": todolist})
 
 def delete(request,pk):
     todo = Todo.objects.get(id=pk)
@@ -56,6 +60,11 @@ def login(request):
 
         if user is not None:
             auth.login(request,user)
+            try:
+                abc = Access(user=request.user)
+                abc.save()
+            except:
+                pass
             return redirect("index")
         else:
             messages.info(request,"credentials invalid")

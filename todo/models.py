@@ -10,3 +10,8 @@ class Todo(models.Model):
 
     def __str__(self):
         return self.task
+
+class Access(models.Model):
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    has_visited = models.BooleanField(default=False,null=True)
+
